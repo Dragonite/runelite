@@ -450,15 +450,15 @@ public interface RSClient extends RSGameShell, Client
 	void setIndexedSpritePalette(int[] indexedSpritePalette);
 
 	@Import("archive6")
-	RSAbstractArchive getMusicTracks();
+	RSArchive getMusicTracks();
 
 	@Import("archive8")
 	@Override
-	RSAbstractArchive getIndexSprites();
+	RSArchive getIndexSprites();
 
 	@Import("archive12")
 	@Override
-	RSAbstractArchive getIndexScripts();
+	RSArchive getIndexScripts();
 
 	@Import("widgetClickMasks")
 	@Override
@@ -907,7 +907,7 @@ public interface RSClient extends RSGameShell, Client
 	@Import("Scene_cameraYTile")
 	void setScreenCenterZ(int screenCenterZ); // <-- This is correct!
 
-	@Import("Client_plane")
+	@Import("Scene_plane")
 	void setScenePlane(int scenePlane);
 
 	@Import("Scene_cameraXTileMin")
@@ -1040,7 +1040,7 @@ public interface RSClient extends RSGameShell, Client
 	RSPcmStreamMixer getSoundEffectAudioQueue();
 
 	@Import("archive4")
-	RSAbstractArchive getIndexCache4();
+	RSArchive getIndexCache4();
 
 	@Import("decimator")
 	RSDecimator getSoundEffectResampler();

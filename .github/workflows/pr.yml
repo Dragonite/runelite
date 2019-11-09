@@ -1,17 +1,31 @@
-name: OpenOSRS - CI (push)
+name: OpenOSRS - CI (PR)
 
-on:
-  push:
-    branches:
-      - master
+on: pull_request
 
 jobs:
+  pr-lint:
+    name: PR title
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: PR title lint
+        if: github.event_name == 'pull_request'
+        uses: seferov/pr-lint-action@master
+        with:
+          title-regex: '^([\w-/]+): \w+'
+
   build:
     runs-on: ubuntu-latest
     name: Build
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Set up JDK 11
@@ -29,6 +43,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Set up JDK 11
@@ -46,6 +66,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Set up JDK 11
@@ -56,3 +82,15 @@ jobs:
         run: ./gradlew assemble --console=plain
       - name: Checking code conventions
         run: ./gradlew checkstyleMain --console=plain
+
+  approve:
+    name: Approve
+    needs: [build, test, checkstyle]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Approve pull request
+        if: github.event_name == 'pull_request' && github.actor == 'OpenOSRS'
+        uses: hmarr/auto-approve-action@v2.0.0
+        with:
+          github-token: ${{ secrets.Owain }}
